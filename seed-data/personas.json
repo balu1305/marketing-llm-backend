@@ -1,0 +1,92 @@
+[
+  {
+    "userId": null,
+    "name": "Budget-Conscious Students",
+    "description": "College students looking for affordable products and services that offer value for money.",
+    "demographics": {
+      "age": "18-25",
+      "income": "$0-$20K",
+      "location": "Urban/College towns"
+    },
+    "psychographics": {
+      "values": ["Value for money", "Convenience", "Social acceptance"],
+      "interests": ["Technology", "Social media", "Entertainment"]
+    },
+    "painPoints": ["Limited budget", "Time constraints", "Social pressure"],
+    "goals": ["Save money", "Build social connections", "Prepare for career"],
+    "preferredChannels": ["instagram", "tiktok", "email"],
+    "isPredefined": true
+  },
+  {
+    "userId": null,
+    "name": "Luxury Tech Enthusiasts",
+    "description": "High-income individuals who prioritize cutting-edge technology and premium design.",
+    "demographics": {
+      "age": "30-50",
+      "income": "$150K+",
+      "location": "Major metropolitan areas"
+    },
+    "psychographics": {
+      "values": ["Quality", "Innovation", "Status"],
+      "interests": ["Gadgets", "Design", "Automotive"]
+    },
+    "painPoints": ["Data privacy concerns", "Desire for seamless integration"],
+    "goals": ["Stay ahead of trends", "Optimize productivity"],
+    "preferredChannels": ["linkedin", "tech-blogs", "email"],
+    "isPredefined": true
+  },
+  {
+    "userId": null,
+    "name": "Health-Conscious Millennials",
+    "description": "Millennials focused on wellness, fitness, and sustainable lifestyle choices.",
+    "demographics": {
+      "age": "28-42",
+      "income": "$50K-$100K",
+      "location": "Suburban and urban areas"
+    },
+    "psychographics": {
+      "values": ["Health", "Sustainability", "Authenticity"],
+      "interests": ["Fitness", "Nutrition", "Environmental issues"]
+    },
+    "painPoints": ["Time for meal preparation", "Information overload", "Expense of healthy options"],
+    "goals": ["Maintain healthy lifestyle", "Environmental responsibility", "Work-life balance"],
+    "preferredChannels": ["instagram", "facebook", "email"],
+    "isPredefined": true
+  },
+  {
+    "userId": null,
+    "name": "Small Business Owners",
+    "description": "Entrepreneurs and small business owners looking to grow their businesses efficiently.",
+    "demographics": {
+      "age": "25-55",
+      "income": "$40K-$150K",
+      "location": "Diverse locations"
+    },
+    "psychographics": {
+      "values": ["Independence", "Growth", "Efficiency"],
+      "interests": ["Business development", "Marketing", "Technology"]
+    },
+    "painPoints": ["Limited marketing budget", "Time management", "Competition"],
+    "goals": ["Increase revenue", "Improve efficiency", "Build brand awareness"],
+    "preferredChannels": ["linkedin", "email", "facebook"],
+    "isPredefined": true
+  },
+  {
+    "userId": null,
+    "name": "Working Parents",
+    "description": "Busy parents balancing career and family responsibilities, seeking convenience and efficiency.",
+    "demographics": {
+      "age": "30-45",
+      "income": "$60K-$120K",
+      "location": "Suburban areas"
+    },
+    "psychographics": {
+      "values": ["Family", "Convenience", "Reliability"],
+      "interests": ["Parenting", "Education", "Home management"]
+    },
+    "painPoints": ["Time scarcity", "Managing household expenses", "Work-life balance"],
+    "goals": ["Quality family time", "Career advancement", "Financial security"],
+    "preferredChannels": ["email", "facebook", "instagram"],
+    "isPredefined": true
+  }
+]
