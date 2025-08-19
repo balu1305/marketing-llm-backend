@@ -1,33 +1,33 @@
-require('dotenv').config();
-const axios = require('axios');
+require("dotenv").config();
+const axios = require("axios");
 
-const API_BASE = 'http://localhost:5000/api';
-let authToken = '';
+const API_BASE = "http://localhost:5000/api";
+let authToken = "";
 
 // Test data
 const testUser = {
-  email: 'test@example.com',
-  password: 'TestPass123!',
-  firstName: 'Test',
-  lastName: 'User',
-  companyName: 'Test Company'
+  email: "test@example.com",
+  password: "TestPass123!",
+  firstName: "Test",
+  lastName: "User",
+  companyName: "Test Company",
 };
 
 const testPersona = {
-  name: 'Test Persona',
-  description: 'A test persona for verification',
+  name: "Test Persona",
+  description: "A test persona for verification",
   demographics: {
-    age: '25-35',
-    income: '$50K-$75K',
-    location: 'Test City'
+    age: "25-35",
+    income: "$50K-$75K",
+    location: "Test City",
   },
   psychographics: {
-    values: ['Innovation', 'Quality'],
-    interests: ['Technology', 'Business']
+    values: ["Innovation", "Quality"],
+    interests: ["Technology", "Business"],
   },
-  painPoints: ['Limited time', 'Budget constraints'],
-  goals: ['Increase efficiency', 'Save money'],
-  preferredChannels: ['email', 'linkedin']
+  painPoints: ["Limited time", "Budget constraints"],
+  goals: ["Increase efficiency", "Save money"],
+  preferredChannels: ["email", "linkedin"],
 };
 
 // Helper function for API requests
@@ -37,10 +37,10 @@ const apiRequest = async (method, endpoint, data = null, token = null) => {
       method,
       url: `${API_BASE}${endpoint}`,
       headers: {
-        'Content-Type': 'application/json',
-        ...(token && { Authorization: `Bearer ${token}` })
+        "Content-Type": "application/json",
+        ...(token && { Authorization: `Bearer ${token}` }),
       },
-      ...(data && { data })
+      ...(data && { data }),
     };
 
     const response = await axios(config);
@@ -48,128 +48,148 @@ const apiRequest = async (method, endpoint, data = null, token = null) => {
   } catch (error) {
     return {
       success: false,
-      error: error.response?.data || error.message
+      error: error.response?.data || error.message,
     };
   }
 };
 
 // Test functions
 const testHealthCheck = async () => {
-  console.log('🏥 Testing health check...');
-  const result = await apiRequest('GET', '/health');
-  console.log(result.success ? '✅ Health check passed' : '❌ Health check failed');
+  console.log("🏥 Testing health check...");
+  const result = await apiRequest("GET", "/health");
+  console.log(
+    result.success ? "✅ Health check passed" : "❌ Health check failed"
+  );
   return result.success;
 };
 
 const testUserRegistration = async () => {
-  console.log('👤 Testing user registration...');
-  const result = await apiRequest('POST', '/auth/register', testUser);
-  
+  console.log("👤 Testing user registration...");
+  const result = await apiRequest("POST", "/auth/register", testUser);
+
   if (result.success) {
     authToken = result.data.data.accessToken;
-    console.log('✅ User registration successful');
+    console.log("✅ User registration successful");
     return true;
   } else {
-    console.log('❌ User registration failed:', result.error.message);
+    console.log("❌ User registration failed:", result.error.message);
     return false;
   }
 };
 
 const testUserLogin = async () => {
-  console.log('🔐 Testing user login...');
-  const result = await apiRequest('POST', '/auth/login', {
+  console.log("🔐 Testing user login...");
+  const result = await apiRequest("POST", "/auth/login", {
     email: testUser.email,
-    password: testUser.password
+    password: testUser.password,
   });
-  
+
   if (result.success) {
     authToken = result.data.data.accessToken;
-    console.log('✅ User login successful');
+    console.log("✅ User login successful");
     return true;
   } else {
-    console.log('❌ User login failed:', result.error.message);
+    console.log("❌ User login failed:", result.error.message);
     return false;
   }
 };
 
 const testDemoLogin = async () => {
-  console.log('🔐 Testing demo user login...');
-  const result = await apiRequest('POST', '/auth/login', {
-    email: 'demo@marketingllm.com',
-    password: 'Demo123!'
+  console.log("🔐 Testing demo user login...");
+  const result = await apiRequest("POST", "/auth/login", {
+    email: "demo@marketingllm.com",
+    password: "Demo123!",
   });
-  
+
   if (result.success) {
     authToken = result.data.data.accessToken;
-    console.log('✅ Demo user login successful');
+    console.log("✅ Demo user login successful");
     return true;
   } else {
-    console.log('❌ Demo user login failed:', result.error.message);
+    console.log("❌ Demo user login failed:", result.error.message);
     return false;
   }
 };
 
 const testGetProfile = async () => {
-  console.log('👤 Testing get profile...');
-  const result = await apiRequest('GET', '/auth/profile', null, authToken);
-  console.log(result.success ? '✅ Get profile successful' : '❌ Get profile failed');
+  console.log("👤 Testing get profile...");
+  const result = await apiRequest("GET", "/auth/profile", null, authToken);
+  console.log(
+    result.success ? "✅ Get profile successful" : "❌ Get profile failed"
+  );
   return result.success;
 };
 
 const testGetPersonas = async () => {
-  console.log('👥 Testing get personas...');
-  const result = await apiRequest('GET', '/personas', null, authToken);
-  
+  console.log("👥 Testing get personas...");
+  const result = await apiRequest("GET", "/personas", null, authToken);
+
   if (result.success) {
-    console.log(`✅ Get personas successful - Found ${result.data.count} personas`);
+    console.log(
+      `✅ Get personas successful - Found ${result.data.count} personas`
+    );
     return true;
   } else {
-    console.log('❌ Get personas failed:', result.error.message);
+    console.log("❌ Get personas failed:", result.error.message);
     return false;
   }
 };
 
 const testCreatePersona = async () => {
-  console.log('➕ Testing create persona...');
-  const result = await apiRequest('POST', '/personas', testPersona, authToken);
-  
+  console.log("➕ Testing create persona...");
+  const result = await apiRequest("POST", "/personas", testPersona, authToken);
+
   if (result.success) {
-    console.log('✅ Create persona successful');
+    console.log("✅ Create persona successful");
     return result.data.data.persona._id;
   } else {
-    console.log('❌ Create persona failed:', result.error.message);
+    console.log("❌ Create persona failed:", result.error.message);
     return null;
   }
 };
 
 const testUpdatePersona = async (personaId) => {
-  console.log('✏️ Testing update persona...');
+  console.log("✏️ Testing update persona...");
   const updatedData = {
     ...testPersona,
-    name: 'Updated Test Persona',
-    description: 'An updated test persona'
+    name: "Updated Test Persona",
+    description: "An updated test persona",
   };
-  
-  const result = await apiRequest('PUT', `/personas/${personaId}`, updatedData, authToken);
-  console.log(result.success ? '✅ Update persona successful' : '❌ Update persona failed');
+
+  const result = await apiRequest(
+    "PUT",
+    `/personas/${personaId}`,
+    updatedData,
+    authToken
+  );
+  console.log(
+    result.success ? "✅ Update persona successful" : "❌ Update persona failed"
+  );
   return result.success;
 };
 
 const testDeletePersona = async (personaId) => {
-  console.log('🗑️ Testing delete persona...');
-  const result = await apiRequest('DELETE', `/personas/${personaId}`, null, authToken);
-  console.log(result.success ? '✅ Delete persona successful' : '❌ Delete persona failed');
+  console.log("🗑️ Testing delete persona...");
+  const result = await apiRequest(
+    "DELETE",
+    `/personas/${personaId}`,
+    null,
+    authToken
+  );
+  console.log(
+    result.success ? "✅ Delete persona successful" : "❌ Delete persona failed"
+  );
   return result.success;
 };
 
 // Main test runner
 const runTests = async () => {
-  console.log('🚀 Starting API Tests...');
-  console.log('=' .repeat(50));
-  
+  console.log("🚀 Starting API Tests...");
+  console.log("=".repeat(50));
+
   let passedTests = 0;
   let totalTests = 0;
-  
+
   const tests = [
     testHealthCheck,
     testUserRegistration,
@@ -185,9 +205,9 @@ const runTests = async () => {
         return updateSuccess && deleteSuccess;
       }
       return false;
-    }
+    },
   ];
-  
+
   // Run tests with demo user login as fallback
   for (const test of tests) {
     totalTests++;
@@ -195,36 +215,36 @@ const runTests = async () => {
       const result = await test();
       if (result) passedTests++;
     } catch (error) {
-      console.log('❌ Test failed with error:', error.message);
-      
+      console.log("❌ Test failed with error:", error.message);
+
       // If registration fails, try demo login
       if (test === testUserRegistration) {
-        console.log('💡 Trying demo user login instead...');
+        console.log("💡 Trying demo user login instead...");
         const demoResult = await testDemoLogin();
         if (demoResult) passedTests++;
       }
     }
   }
-  
-  console.log('=' .repeat(50));
+
+  console.log("=".repeat(50));
   console.log(`📊 Test Results: ${passedTests}/${totalTests} tests passed`);
-  
+
   if (passedTests === totalTests) {
-    console.log('🎉 All tests passed! The API is working correctly.');
+    console.log("🎉 All tests passed! The API is working correctly.");
   } else {
-    console.log('⚠️ Some tests failed. Please check the implementation.');
+    console.log("⚠️ Some tests failed. Please check the implementation.");
   }
-  
-  console.log('\n📋 Available Demo Credentials:');
-  console.log('   📧 Email: demo@marketingllm.com');
-  console.log('   🔑 Password: Demo123!');
-  
+
+  console.log("\n📋 Available Demo Credentials:");
+  console.log("   📧 Email: demo@marketingllm.com");
+  console.log("   🔑 Password: Demo123!");
+
   process.exit(0);
 };
 
 // Handle errors
-process.on('unhandledRejection', (error) => {
-  console.error('❌ Unhandled rejection:', error.message);
+process.on("unhandledRejection", (error) => {
+  console.error("❌ Unhandled rejection:", error.message);
   process.exit(1);
 });
 

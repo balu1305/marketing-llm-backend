@@ -1,6 +1,6 @@
-const Campaign = require('../models/Campaign');
-const Persona = require('../models/Persona');
-const AIContentGenerator = require('../services/aiService');
+const Campaign = require("../models/Campaign");
+const Persona = require("../models/Persona");
+const AIContentGenerator = require("../services/aiService");
 
 // Initialize AI service
 const aiService = new AIContentGenerator();
@@ -19,27 +19,28 @@ const generateEmailContent = async (req, res) => {
     if (!aiService.isAvailable()) {
       return res.status(503).json({
         success: false,
-        message: 'AI content generation service is not available. Please configure OpenAI API key.'
+        message:
+          "AI content generation service is not available. Please configure OpenAI API key.",
       });
     }
 
     // Get campaign and persona data
     const [campaign, persona] = await Promise.all([
       Campaign.findById(campaignId),
-      Persona.findById(personaId)
+      Persona.findById(personaId),
     ]);
 
     if (!campaign) {
       return res.status(404).json({
         success: false,
-        message: 'Campaign not found'
+        message: "Campaign not found",
       });
     }
 
     if (!persona) {
       return res.status(404).json({
         success: false,
-        message: 'Persona not found'
+        message: "Persona not found",
       });
     }
 
@@ -47,14 +48,14 @@ const generateEmailContent = async (req, res) => {
     if (!campaign.canBeEditedBy(userId)) {
       return res.status(403).json({
         success: false,
-        message: 'Access denied to this campaign'
+        message: "Access denied to this campaign",
       });
     }
 
     if (!persona.isPredefined && persona.userId && !persona.isOwnedBy(userId)) {
       return res.status(403).json({
         success: false,
-        message: 'Access denied to this persona'
+        message: "Access denied to this persona",
       });
     }
 
@@ -65,24 +66,26 @@ const generateEmailContent = async (req, res) => {
     }
 
     // Generate email content
-    const emailContent = await aiService.generateEmailContent(persona, campaign);
+    const emailContent = await aiService.generateEmailContent(
+      persona,
+      campaign
+    );
 
     // Add content to campaign
     await campaign.addContent(emailContent);
 
     res.json({
       success: true,
-      message: 'Email content generated successfully',
+      message: "Email content generated successfully",
       data: {
-        content: emailContent
-      }
+        content: emailContent,
+      },
     });
-
   } catch (error) {
-    console.error('Generate email content error:', error);
+    console.error("Generate email content error:", error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error while generating email content'
+      message: "Internal server error while generating email content",
     });
   }
 };
@@ -101,36 +104,44 @@ const generateSocialContent = async (req, res) => {
     if (!aiService.isAvailable()) {
       return res.status(503).json({
         success: false,
-        message: 'AI content generation service is not available. Please configure OpenAI API key.'
+        message:
+          "AI content generation service is not available. Please configure OpenAI API key.",
       });
     }
 
     // Validate platform
-    const validPlatforms = ['linkedin', 'facebook', 'twitter', 'instagram', 'youtube', 'tiktok'];
+    const validPlatforms = [
+      "linkedin",
+      "facebook",
+      "twitter",
+      "instagram",
+      "youtube",
+      "tiktok",
+    ];
     if (!validPlatforms.includes(platform)) {
       return res.status(400).json({
         success: false,
-        message: 'Invalid platform specified'
+        message: "Invalid platform specified",
       });
     }
 
     // Get campaign and persona data
     const [campaign, persona] = await Promise.all([
       Campaign.findById(campaignId),
-      Persona.findById(personaId)
+      Persona.findById(personaId),
     ]);
 
     if (!campaign) {
       return res.status(404).json({
         success: false,
-        message: 'Campaign not found'
+        message: "Campaign not found",
       });
     }
 
     if (!persona) {
       return res.status(404).json({
         success: false,
-        message: 'Persona not found'
+        message: "Persona not found",
       });
     }
 
@@ -138,14 +149,14 @@ const generateSocialContent = async (req, res) => {
     if (!campaign.canBeEditedBy(userId)) {
       return res.status(403).json({
         success: false,
-        message: 'Access denied to this campaign'
+        message: "Access denied to this campaign",
       });
     }
 
     if (!persona.isPredefined && persona.userId && !persona.isOwnedBy(userId)) {
       return res.status(403).json({
         success: false,
-        message: 'Access denied to this persona'
+        message: "Access denied to this persona",
       });
     }
 
@@ -156,7 +167,11 @@ const generateSocialContent = async (req, res) => {
     }
 
     // Generate social media content
-    const socialContent = await aiService.generateSocialContent(persona, campaign, platform);
+    const socialContent = await aiService.generateSocialContent(
+      persona,
+      campaign,
+      platform
+    );
 
     // Add content to campaign
     await campaign.addContent(socialContent);
@@ -165,15 +180,14 @@ const generateSocialContent = async (req, res) => {
       success: true,
       message: `${platform} content generated successfully`,
       data: {
-        content: socialContent
-      }
+        content: socialContent,
+      },
     });
-
   } catch (error) {
-    console.error('Generate social content error:', error);
+    console.error("Generate social content error:", error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error while generating social media content'
+      message: "Internal server error while generating social media content",
     });
   }
 };
@@ -185,34 +199,40 @@ const generateSocialContent = async (req, res) => {
  */
 const generateAdCopy = async (req, res) => {
   try {
-    const { campaignId, personaId, platform = 'google-ads', customInstructions } = req.body;
+    const {
+      campaignId,
+      personaId,
+      platform = "google-ads",
+      customInstructions,
+    } = req.body;
     const userId = req.userId;
 
     // Validate AI service availability
     if (!aiService.isAvailable()) {
       return res.status(503).json({
         success: false,
-        message: 'AI content generation service is not available. Please configure OpenAI API key.'
+        message:
+          "AI content generation service is not available. Please configure OpenAI API key.",
       });
     }
 
     // Get campaign and persona data
     const [campaign, persona] = await Promise.all([
       Campaign.findById(campaignId),
-      Persona.findById(personaId)
+      Persona.findById(personaId),
     ]);
 
     if (!campaign) {
       return res.status(404).json({
         success: false,
-        message: 'Campaign not found'
+        message: "Campaign not found",
       });
     }
 
     if (!persona) {
       return res.status(404).json({
         success: false,
-        message: 'Persona not found'
+        message: "Persona not found",
       });
     }
 
@@ -220,14 +240,14 @@ const generateAdCopy = async (req, res) => {
     if (!campaign.canBeEditedBy(userId)) {
       return res.status(403).json({
         success: false,
-        message: 'Access denied to this campaign'
+        message: "Access denied to this campaign",
       });
     }
 
     if (!persona.isPredefined && persona.userId && !persona.isOwnedBy(userId)) {
       return res.status(403).json({
         success: false,
-        message: 'Access denied to this persona'
+        message: "Access denied to this persona",
       });
     }
 
@@ -238,24 +258,27 @@ const generateAdCopy = async (req, res) => {
     }
 
     // Generate ad copy
-    const adContent = await aiService.generateAdCopy(persona, campaign, platform);
+    const adContent = await aiService.generateAdCopy(
+      persona,
+      campaign,
+      platform
+    );
 
     // Add content to campaign
     await campaign.addContent(adContent);
 
     res.json({
       success: true,
-      message: 'Ad copy generated successfully',
+      message: "Ad copy generated successfully",
       data: {
-        content: adContent
-      }
+        content: adContent,
+      },
     });
-
   } catch (error) {
-    console.error('Generate ad copy error:', error);
+    console.error("Generate ad copy error:", error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error while generating ad copy'
+      message: "Internal server error while generating ad copy",
     });
   }
 };
@@ -267,50 +290,57 @@ const generateAdCopy = async (req, res) => {
  */
 const generateContentVariations = async (req, res) => {
   try {
-    const { campaignId, personaId, contentType, variations = 2, platform } = req.body;
+    const {
+      campaignId,
+      personaId,
+      contentType,
+      variations = 2,
+      platform,
+    } = req.body;
     const userId = req.userId;
 
     // Validate AI service availability
     if (!aiService.isAvailable()) {
       return res.status(503).json({
         success: false,
-        message: 'AI content generation service is not available. Please configure OpenAI API key.'
+        message:
+          "AI content generation service is not available. Please configure OpenAI API key.",
       });
     }
 
     // Validate inputs
-    const validContentTypes = ['email', 'social_post', 'ad_copy'];
+    const validContentTypes = ["email", "social_post", "ad_copy"];
     if (!validContentTypes.includes(contentType)) {
       return res.status(400).json({
         success: false,
-        message: 'Invalid content type specified'
+        message: "Invalid content type specified",
       });
     }
 
     if (variations < 2 || variations > 5) {
       return res.status(400).json({
         success: false,
-        message: 'Number of variations must be between 2 and 5'
+        message: "Number of variations must be between 2 and 5",
       });
     }
 
     // Get campaign and persona data
     const [campaign, persona] = await Promise.all([
       Campaign.findById(campaignId),
-      Persona.findById(personaId)
+      Persona.findById(personaId),
     ]);
 
     if (!campaign) {
       return res.status(404).json({
         success: false,
-        message: 'Campaign not found'
+        message: "Campaign not found",
       });
     }
 
     if (!persona) {
       return res.status(404).json({
         success: false,
-        message: 'Persona not found'
+        message: "Persona not found",
       });
     }
 
@@ -318,28 +348,30 @@ const generateContentVariations = async (req, res) => {
     if (!campaign.canBeEditedBy(userId)) {
       return res.status(403).json({
         success: false,
-        message: 'Access denied to this campaign'
+        message: "Access denied to this campaign",
       });
     }
 
     if (!persona.isPredefined && persona.userId && !persona.isOwnedBy(userId)) {
       return res.status(403).json({
         success: false,
-        message: 'Access denied to this persona'
+        message: "Access denied to this persona",
       });
     }
 
     // Set platform for social posts if needed
-    if (contentType === 'social_post') {
+    if (contentType === "social_post") {
       campaign.generationSettings = campaign.generationSettings || {};
-      campaign.generationSettings.platforms = platform ? [platform] : ['linkedin'];
+      campaign.generationSettings.platforms = platform
+        ? [platform]
+        : ["linkedin"];
     }
 
     // Generate content variations
     const contentVariations = await aiService.generateContentVariations(
-      persona, 
-      campaign, 
-      contentType, 
+      persona,
+      campaign,
+      contentType,
       variations
     );
 
@@ -352,15 +384,14 @@ const generateContentVariations = async (req, res) => {
       success: true,
       message: `${variations} ${contentType} variations generated successfully`,
       data: {
-        variations: contentVariations
-      }
+        variations: contentVariations,
+      },
     });
-
   } catch (error) {
-    console.error('Generate content variations error:', error);
+    console.error("Generate content variations error:", error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error while generating content variations'
+      message: "Internal server error while generating content variations",
     });
   }
 };
@@ -372,12 +403,12 @@ const generateContentVariations = async (req, res) => {
  */
 const batchGenerateContent = async (req, res) => {
   try {
-    const { 
-      campaignId, 
-      personaId, 
-      contentTypes = ['email', 'social_post'], 
-      platforms = ['email', 'linkedin'],
-      customInstructions 
+    const {
+      campaignId,
+      personaId,
+      contentTypes = ["email", "social_post"],
+      platforms = ["email", "linkedin"],
+      customInstructions,
     } = req.body;
     const userId = req.userId;
 
@@ -385,27 +416,28 @@ const batchGenerateContent = async (req, res) => {
     if (!aiService.isAvailable()) {
       return res.status(503).json({
         success: false,
-        message: 'AI content generation service is not available. Please configure OpenAI API key.'
+        message:
+          "AI content generation service is not available. Please configure OpenAI API key.",
       });
     }
 
     // Get campaign and persona data
     const [campaign, persona] = await Promise.all([
       Campaign.findById(campaignId),
-      Persona.findById(personaId)
+      Persona.findById(personaId),
     ]);
 
     if (!campaign) {
       return res.status(404).json({
         success: false,
-        message: 'Campaign not found'
+        message: "Campaign not found",
       });
     }
 
     if (!persona) {
       return res.status(404).json({
         success: false,
-        message: 'Persona not found'
+        message: "Persona not found",
       });
     }
 
@@ -413,14 +445,14 @@ const batchGenerateContent = async (req, res) => {
     if (!campaign.canBeEditedBy(userId)) {
       return res.status(403).json({
         success: false,
-        message: 'Access denied to this campaign'
+        message: "Access denied to this campaign",
       });
     }
 
     if (!persona.isPredefined && persona.userId && !persona.isOwnedBy(userId)) {
       return res.status(403).json({
         success: false,
-        message: 'Access denied to this persona'
+        message: "Access denied to this persona",
       });
     }
 
@@ -436,18 +468,25 @@ const batchGenerateContent = async (req, res) => {
     // Generate content for each type and platform
     for (const contentType of contentTypes) {
       try {
-        if (contentType === 'email') {
-          const emailContent = await aiService.generateEmailContent(persona, campaign);
+        if (contentType === "email") {
+          const emailContent = await aiService.generateEmailContent(
+            persona,
+            campaign
+          );
           await campaign.addContent(emailContent);
           generatedContent.push(emailContent);
-        } else if (contentType === 'social_post') {
-          const socialPlatforms = platforms.filter(p => p !== 'email');
+        } else if (contentType === "social_post") {
+          const socialPlatforms = platforms.filter((p) => p !== "email");
           for (const platform of socialPlatforms) {
-            const socialContent = await aiService.generateSocialContent(persona, campaign, platform);
+            const socialContent = await aiService.generateSocialContent(
+              persona,
+              campaign,
+              platform
+            );
             await campaign.addContent(socialContent);
             generatedContent.push(socialContent);
           }
-        } else if (contentType === 'ad_copy') {
+        } else if (contentType === "ad_copy") {
           const adContent = await aiService.generateAdCopy(persona, campaign);
           await campaign.addContent(adContent);
           generatedContent.push(adContent);
@@ -463,15 +502,14 @@ const batchGenerateContent = async (req, res) => {
       message: `Batch content generation completed. Generated ${generatedContent.length} pieces of content.`,
       data: {
         generatedContent,
-        errors: errors.length > 0 ? errors : undefined
-      }
+        errors: errors.length > 0 ? errors : undefined,
+      },
     });
-
   } catch (error) {
-    console.error('Batch generate content error:', error);
+    console.error("Batch generate content error:", error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error while batch generating content'
+      message: "Internal server error while batch generating content",
     });
   }
 };
@@ -484,21 +522,21 @@ const batchGenerateContent = async (req, res) => {
 const getAIStatus = async (req, res) => {
   try {
     const isAvailable = aiService.isAvailable();
-    
+
     res.json({
       success: true,
       data: {
         available: isAvailable,
-        message: isAvailable 
-          ? 'AI content generation service is available'
-          : 'AI service not configured. Please set OPENAI_API_KEY environment variable.'
-      }
+        message: isAvailable
+          ? "AI content generation service is available"
+          : "AI service not configured. Please set OPENAI_API_KEY environment variable.",
+      },
     });
   } catch (error) {
-    console.error('Get AI status error:', error);
+    console.error("Get AI status error:", error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error while checking AI service status'
+      message: "Internal server error while checking AI service status",
     });
   }
 };
@@ -509,5 +547,5 @@ module.exports = {
   generateAdCopy,
   generateContentVariations,
   batchGenerateContent,
-  getAIStatus
+  getAIStatus,
 };

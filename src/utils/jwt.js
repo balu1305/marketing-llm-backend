@@ -1,4 +1,4 @@
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
 /**
  * Generate JWT access token
@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
  */
 const generateAccessToken = (payload) => {
   return jwt.sign(payload, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE || '7d'
+    expiresIn: process.env.JWT_EXPIRE || "7d",
   });
 };
 
@@ -18,7 +18,7 @@ const generateAccessToken = (payload) => {
  */
 const generateRefreshToken = (payload) => {
   return jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {
-    expiresIn: process.env.JWT_REFRESH_EXPIRE || '30d'
+    expiresIn: process.env.JWT_REFRESH_EXPIRE || "30d",
   });
 };
 
@@ -50,12 +50,12 @@ const generateTokens = (user) => {
     userId: user._id,
     email: user.email,
     role: user.role,
-    subscriptionTier: user.subscriptionTier
+    subscriptionTier: user.subscriptionTier,
   };
 
   return {
     accessToken: generateAccessToken(payload),
-    refreshToken: generateRefreshToken({ userId: user._id })
+    refreshToken: generateRefreshToken({ userId: user._id }),
   };
 };
 
@@ -64,5 +64,5 @@ module.exports = {
   generateRefreshToken,
   verifyAccessToken,
   verifyRefreshToken,
-  generateTokens
+  generateTokens,
 };

@@ -48,8 +48,16 @@
       "values": ["Health", "Sustainability", "Authenticity"],
       "interests": ["Fitness", "Nutrition", "Environmental issues"]
     },
-    "painPoints": ["Time for meal preparation", "Information overload", "Expense of healthy options"],
-    "goals": ["Maintain healthy lifestyle", "Environmental responsibility", "Work-life balance"],
+    "painPoints": [
+      "Time for meal preparation",
+      "Information overload",
+      "Expense of healthy options"
+    ],
+    "goals": [
+      "Maintain healthy lifestyle",
+      "Environmental responsibility",
+      "Work-life balance"
+    ],
     "preferredChannels": ["instagram", "facebook", "email"],
     "isPredefined": true
   },
@@ -66,8 +74,16 @@
       "values": ["Independence", "Growth", "Efficiency"],
       "interests": ["Business development", "Marketing", "Technology"]
     },
-    "painPoints": ["Limited marketing budget", "Time management", "Competition"],
-    "goals": ["Increase revenue", "Improve efficiency", "Build brand awareness"],
+    "painPoints": [
+      "Limited marketing budget",
+      "Time management",
+      "Competition"
+    ],
+    "goals": [
+      "Increase revenue",
+      "Improve efficiency",
+      "Build brand awareness"
+    ],
     "preferredChannels": ["linkedin", "email", "facebook"],
     "isPredefined": true
   },
@@ -84,8 +100,16 @@
       "values": ["Family", "Convenience", "Reliability"],
       "interests": ["Parenting", "Education", "Home management"]
     },
-    "painPoints": ["Time scarcity", "Managing household expenses", "Work-life balance"],
-    "goals": ["Quality family time", "Career advancement", "Financial security"],
+    "painPoints": [
+      "Time scarcity",
+      "Managing household expenses",
+      "Work-life balance"
+    ],
+    "goals": [
+      "Quality family time",
+      "Career advancement",
+      "Financial security"
+    ],
     "preferredChannels": ["email", "facebook", "instagram"],
     "isPredefined": true
   }

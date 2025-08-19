@@ -1,5 +1,5 @@
-const Campaign = require('../models/Campaign');
-const Persona = require('../models/Persona');
+const Campaign = require("../models/Campaign");
+const Persona = require("../models/Persona");
 
 /**
  * Get all campaigns for the authenticated user
@@ -9,20 +9,20 @@ const Persona = require('../models/Persona');
 const getCampaigns = async (req, res) => {
   try {
     const userId = req.userId;
-    const { 
-      page = 1, 
-      limit = 10, 
-      status, 
-      objective, 
+    const {
+      page = 1,
+      limit = 10,
+      status,
+      objective,
       search,
-      sortBy = 'createdAt',
-      sortOrder = 'desc'
+      sortBy = "createdAt",
+      sortOrder = "desc",
     } = req.query;
 
     // Build query
-    const query = { 
-      userId, 
-      isArchived: false 
+    const query = {
+      userId,
+      isArchived: false,
     };
 
     if (status) {
@@ -44,15 +44,15 @@ const getCampaigns = async (req, res) => {
       limit: parseInt(limit),
       populate: [
         {
-          path: 'personaId',
-          select: 'name description demographics'
+          path: "personaId",
+          select: "name description demographics",
         },
         {
-          path: 'userId',
-          select: 'firstName lastName email'
-        }
+          path: "userId",
+          select: "firstName lastName email",
+        },
       ],
-      sort: { [sortBy]: sortOrder === 'desc' ? -1 : 1 }
+      sort: { [sortBy]: sortOrder === "desc" ? -1 : 1 },
     };
 
     const campaigns = await Campaign.paginate(query, options);
@@ -66,15 +66,15 @@ const getCampaigns = async (req, res) => {
           totalPages: campaigns.totalPages,
           totalDocuments: campaigns.totalDocs,
           hasNextPage: campaigns.hasNextPage,
-          hasPrevPage: campaigns.hasPrevPage
-        }
-      }
+          hasPrevPage: campaigns.hasPrevPage,
+        },
+      },
     });
   } catch (error) {
-    console.error('Get campaigns error:', error);
+    console.error("Get campaigns error:", error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error while fetching campaigns'
+      message: "Internal server error while fetching campaigns",
     });
   }
 };
@@ -90,14 +90,14 @@ const getCampaign = async (req, res) => {
     const userId = req.userId;
 
     const campaign = await Campaign.findById(id)
-      .populate('personaId', 'name description demographics psychographics')
-      .populate('userId', 'firstName lastName email')
-      .populate('collaborators.userId', 'firstName lastName email');
+      .populate("personaId", "name description demographics psychographics")
+      .populate("userId", "firstName lastName email")
+      .populate("collaborators.userId", "firstName lastName email");
 
     if (!campaign) {
       return res.status(404).json({
         success: false,
-        message: 'Campaign not found'
+        message: "Campaign not found",
       });
     }
 
@@ -105,21 +105,21 @@ const getCampaign = async (req, res) => {
     if (!campaign.isOwnedBy(userId) && !campaign.canBeEditedBy(userId)) {
       return res.status(403).json({
         success: false,
-        message: 'Access denied to this campaign'
+        message: "Access denied to this campaign",
       });
     }
 
     res.json({
       success: true,
       data: {
-        campaign
-      }
+        campaign,
+      },
     });
   } catch (error) {
-    console.error('Get campaign error:', error);
+    console.error("Get campaign error:", error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error while fetching campaign'
+      message: "Internal server error while fetching campaign",
     });
   }
 };
@@ -135,19 +135,23 @@ const createCampaign = async (req, res) => {
 
     // Verify persona exists and user has access to it
     const persona = await Persona.findById(req.body.personaId);
-    
+
     if (!persona) {
       return res.status(404).json({
         success: false,
-        message: 'Persona not found'
+        message: "Persona not found",
       });
     }
 
     // Check if user can access this persona
-    if (!persona.isPredefined && persona.userId && persona.userId.toString() !== userId.toString()) {
+    if (
+      !persona.isPredefined &&
+      persona.userId &&
+      persona.userId.toString() !== userId.toString()
+    ) {
       return res.status(403).json({
         success: false,
-        message: 'Access denied to this persona'
+        message: "Access denied to this persona",
       });
     }
 
@@ -155,28 +159,28 @@ const createCampaign = async (req, res) => {
     const campaignData = {
       ...req.body,
       userId,
-      status: 'draft'
+      status: "draft",
     };
 
     const campaign = new Campaign(campaignData);
     await campaign.save();
 
     // Populate fields for response
-    await campaign.populate('personaId', 'name description demographics');
-    await campaign.populate('userId', 'firstName lastName email');
+    await campaign.populate("personaId", "name description demographics");
+    await campaign.populate("userId", "firstName lastName email");
 
     res.status(201).json({
       success: true,
-      message: 'Campaign created successfully',
+      message: "Campaign created successfully",
       data: {
-        campaign
-      }
+        campaign,
+      },
     });
   } catch (error) {
-    console.error('Create campaign error:', error);
+    console.error("Create campaign error:", error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error while creating campaign'
+      message: "Internal server error while creating campaign",
     });
   }
 };
@@ -197,7 +201,7 @@ const updateCampaign = async (req, res) => {
     if (!campaign) {
       return res.status(404).json({
         success: false,
-        message: 'Campaign not found'
+        message: "Campaign not found",
       });
     }
 
@@ -205,25 +209,33 @@ const updateCampaign = async (req, res) => {
     if (!campaign.canBeEditedBy(userId)) {
       return res.status(403).json({
         success: false,
-        message: 'You can only edit your own campaigns or campaigns you collaborate on'
+        message:
+          "You can only edit your own campaigns or campaigns you collaborate on",
       });
     }
 
     // If personaId is being updated, verify access
-    if (req.body.personaId && req.body.personaId !== campaign.personaId.toString()) {
+    if (
+      req.body.personaId &&
+      req.body.personaId !== campaign.personaId.toString()
+    ) {
       const persona = await Persona.findById(req.body.personaId);
-      
+
       if (!persona) {
         return res.status(404).json({
           success: false,
-          message: 'Persona not found'
+          message: "Persona not found",
         });
       }
 
-      if (!persona.isPredefined && persona.userId && persona.userId.toString() !== userId.toString()) {
+      if (
+        !persona.isPredefined &&
+        persona.userId &&
+        persona.userId.toString() !== userId.toString()
+      ) {
         return res.status(403).json({
           success: false,
-          message: 'Access denied to this persona'
+          message: "Access denied to this persona",
         });
       }
     }
@@ -234,21 +246,21 @@ const updateCampaign = async (req, res) => {
       { ...req.body, updatedAt: new Date() },
       { new: true, runValidators: true }
     )
-    .populate('personaId', 'name description demographics')
-    .populate('userId', 'firstName lastName email');
+      .populate("personaId", "name description demographics")
+      .populate("userId", "firstName lastName email");
 
     res.json({
       success: true,
-      message: 'Campaign updated successfully',
+      message: "Campaign updated successfully",
       data: {
-        campaign: updatedCampaign
-      }
+        campaign: updatedCampaign,
+      },
     });
   } catch (error) {
-    console.error('Update campaign error:', error);
+    console.error("Update campaign error:", error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error while updating campaign'
+      message: "Internal server error while updating campaign",
     });
   }
 };
@@ -269,7 +281,7 @@ const deleteCampaign = async (req, res) => {
     if (!campaign) {
       return res.status(404).json({
         success: false,
-        message: 'Campaign not found'
+        message: "Campaign not found",
       });
     }
 
@@ -277,7 +289,7 @@ const deleteCampaign = async (req, res) => {
     if (!campaign.isOwnedBy(userId)) {
       return res.status(403).json({
         success: false,
-        message: 'You can only delete your own campaigns'
+        message: "You can only delete your own campaigns",
       });
     }
 
@@ -285,13 +297,13 @@ const deleteCampaign = async (req, res) => {
 
     res.json({
       success: true,
-      message: 'Campaign deleted successfully'
+      message: "Campaign deleted successfully",
     });
   } catch (error) {
-    console.error('Delete campaign error:', error);
+    console.error("Delete campaign error:", error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error while deleting campaign'
+      message: "Internal server error while deleting campaign",
     });
   }
 };
@@ -311,14 +323,15 @@ const archiveCampaign = async (req, res) => {
     if (!campaign) {
       return res.status(404).json({
         success: false,
-        message: 'Campaign not found'
+        message: "Campaign not found",
       });
     }
 
     if (!campaign.canBeEditedBy(userId)) {
       return res.status(403).json({
         success: false,
-        message: 'You can only archive your own campaigns or campaigns you collaborate on'
+        message:
+          "You can only archive your own campaigns or campaigns you collaborate on",
       });
     }
 
@@ -326,13 +339,13 @@ const archiveCampaign = async (req, res) => {
 
     res.json({
       success: true,
-      message: 'Campaign archived successfully'
+      message: "Campaign archived successfully",
     });
   } catch (error) {
-    console.error('Archive campaign error:', error);
+    console.error("Archive campaign error:", error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error while archiving campaign'
+      message: "Internal server error while archiving campaign",
     });
   }
 };
@@ -348,7 +361,7 @@ const getCampaignStats = async (req, res) => {
 
     const stats = await Campaign.aggregate([
       {
-        $match: { userId: userId, isArchived: false }
+        $match: { userId: userId, isArchived: false },
       },
       {
         $group: {
@@ -356,81 +369,84 @@ const getCampaignStats = async (req, res) => {
           totalCampaigns: { $sum: 1 },
           activeCampaigns: {
             $sum: {
-              $cond: [{ $eq: ['$status', 'active'] }, 1, 0]
-            }
+              $cond: [{ $eq: ["$status", "active"] }, 1, 0],
+            },
           },
           draftCampaigns: {
             $sum: {
-              $cond: [{ $eq: ['$status', 'draft'] }, 1, 0]
-            }
+              $cond: [{ $eq: ["$status", "draft"] }, 1, 0],
+            },
           },
           completedCampaigns: {
             $sum: {
-              $cond: [{ $eq: ['$status', 'completed'] }, 1, 0]
-            }
+              $cond: [{ $eq: ["$status", "completed"] }, 1, 0],
+            },
           },
-          totalBudget: { $sum: '$budget' },
-          totalSpent: { $sum: '$metrics.totalSpent' },
-          totalImpressions: { $sum: '$metrics.totalImpressions' },
-          totalClicks: { $sum: '$metrics.totalClicks' },
-          totalConversions: { $sum: '$metrics.totalConversions' },
-          avgCTR: { $avg: '$metrics.ctr' },
-          avgCPC: { $avg: '$metrics.cpc' },
-          avgROI: { $avg: '$metrics.roi' }
-        }
-      }
+          totalBudget: { $sum: "$budget" },
+          totalSpent: { $sum: "$metrics.totalSpent" },
+          totalImpressions: { $sum: "$metrics.totalImpressions" },
+          totalClicks: { $sum: "$metrics.totalClicks" },
+          totalConversions: { $sum: "$metrics.totalConversions" },
+          avgCTR: { $avg: "$metrics.ctr" },
+          avgCPC: { $avg: "$metrics.cpc" },
+          avgROI: { $avg: "$metrics.roi" },
+        },
+      },
     ]);
 
-    const result = stats.length > 0 ? stats[0] : {
-      totalCampaigns: 0,
-      activeCampaigns: 0,
-      draftCampaigns: 0,
-      completedCampaigns: 0,
-      totalBudget: 0,
-      totalSpent: 0,
-      totalImpressions: 0,
-      totalClicks: 0,
-      totalConversions: 0,
-      avgCTR: 0,
-      avgCPC: 0,
-      avgROI: 0
-    };
+    const result =
+      stats.length > 0
+        ? stats[0]
+        : {
+            totalCampaigns: 0,
+            activeCampaigns: 0,
+            draftCampaigns: 0,
+            completedCampaigns: 0,
+            totalBudget: 0,
+            totalSpent: 0,
+            totalImpressions: 0,
+            totalClicks: 0,
+            totalConversions: 0,
+            avgCTR: 0,
+            avgCPC: 0,
+            avgROI: 0,
+          };
 
     // Get campaigns by objective
     const objectiveStats = await Campaign.aggregate([
       {
-        $match: { userId: userId, isArchived: false }
+        $match: { userId: userId, isArchived: false },
       },
       {
         $group: {
-          _id: '$objective',
-          count: { $sum: 1 }
-        }
-      }
+          _id: "$objective",
+          count: { $sum: 1 },
+        },
+      },
     ]);
 
     // Get recent campaign activity
     const recentCampaigns = await Campaign.find({
       userId,
-      isArchived: false
+      isArchived: false,
     })
-    .select('name status createdAt updatedAt')
-    .sort({ updatedAt: -1 })
-    .limit(5);
+      .select("name status createdAt updatedAt")
+      .sort({ updatedAt: -1 })
+      .limit(5);
 
     res.json({
       success: true,
       data: {
         overview: result,
         byObjective: objectiveStats,
-        recentActivity: recentCampaigns
-      }
+        recentActivity: recentCampaigns,
+      },
     });
   } catch (error) {
-    console.error('Get campaign stats error:', error);
+    console.error("Get campaign stats error:", error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error while fetching campaign statistics'
+      message: "Internal server error while fetching campaign statistics",
     });
   }
 };
@@ -450,14 +466,15 @@ const addContentToCampaign = async (req, res) => {
     if (!campaign) {
       return res.status(404).json({
         success: false,
-        message: 'Campaign not found'
+        message: "Campaign not found",
       });
     }
 
     if (!campaign.canBeEditedBy(userId)) {
       return res.status(403).json({
         success: false,
-        message: 'You can only add content to your own campaigns or campaigns you collaborate on'
+        message:
+          "You can only add content to your own campaigns or campaigns you collaborate on",
       });
     }
 
@@ -466,16 +483,16 @@ const addContentToCampaign = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: 'Content added to campaign successfully',
+      message: "Content added to campaign successfully",
       data: {
-        content: campaign.content[campaign.content.length - 1]
-      }
+        content: campaign.content[campaign.content.length - 1],
+      },
     });
   } catch (error) {
-    console.error('Add content to campaign error:', error);
+    console.error("Add content to campaign error:", error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error while adding content to campaign'
+      message: "Internal server error while adding content to campaign",
     });
   }
 };
@@ -495,11 +512,11 @@ const getDashboardCampaigns = async (req, res) => {
     // Get recent campaigns
     const recentCampaigns = await Campaign.find({
       userId,
-      isArchived: false
+      isArchived: false,
     })
-    .populate('personaId', 'name')
-    .sort({ createdAt: -1 })
-    .limit(5);
+      .populate("personaId", "name")
+      .sort({ createdAt: -1 })
+      .limit(5);
 
     // Get campaigns requiring attention (ending soon, low performance, etc.)
     const now = new Date();
@@ -507,26 +524,26 @@ const getDashboardCampaigns = async (req, res) => {
 
     const attentionNeeded = await Campaign.find({
       userId,
-      status: 'active',
+      status: "active",
       endDate: { $lte: nextWeek },
-      isArchived: false
+      isArchived: false,
     })
-    .populate('personaId', 'name')
-    .sort({ endDate: 1 });
+      .populate("personaId", "name")
+      .sort({ endDate: 1 });
 
     res.json({
       success: true,
       data: {
         activeCampaigns,
         recentCampaigns,
-        attentionNeeded
-      }
+        attentionNeeded,
+      },
     });
   } catch (error) {
-    console.error('Get dashboard campaigns error:', error);
+    console.error("Get dashboard campaigns error:", error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error while fetching dashboard campaigns'
+      message: "Internal server error while fetching dashboard campaigns",
     });
   }
 };
@@ -540,5 +557,5 @@ module.exports = {
   archiveCampaign,
   getCampaignStats,
   addContentToCampaign,
-  getDashboardCampaigns
+  getDashboardCampaigns,
 };

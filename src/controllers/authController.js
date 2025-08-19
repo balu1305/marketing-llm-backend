@@ -1,5 +1,5 @@
-const User = require('../models/User');
-const { generateTokens, verifyRefreshToken } = require('../utils/jwt');
+const User = require("../models/User");
+const { generateTokens, verifyRefreshToken } = require("../utils/jwt");
 
 /**
  * Register a new user
@@ -15,7 +15,7 @@ const register = async (req, res) => {
     if (existingUser) {
       return res.status(400).json({
         success: false,
-        message: 'User with this email already exists'
+        message: "User with this email already exists",
       });
     }
 
@@ -25,7 +25,7 @@ const register = async (req, res) => {
       passwordHash: password, // Will be hashed by the pre-save middleware
       firstName,
       lastName,
-      companyName
+      companyName,
     });
 
     await user.save();
@@ -38,7 +38,7 @@ const register = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: 'User registered successfully',
+      message: "User registered successfully",
       data: {
         user: {
           id: user._id,
@@ -49,16 +49,16 @@ const register = async (req, res) => {
           companyName: user.companyName,
           role: user.role,
           subscriptionTier: user.subscriptionTier,
-          createdAt: user.createdAt
+          createdAt: user.createdAt,
         },
-        ...tokens
-      }
+        ...tokens,
+      },
     });
   } catch (error) {
-    console.error('Registration error:', error);
+    console.error("Registration error:", error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error during registration'
+      message: "Internal server error during registration",
     });
   }
 };
@@ -77,7 +77,7 @@ const login = async (req, res) => {
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid email or password'
+        message: "Invalid email or password",
       });
     }
 
@@ -85,7 +85,7 @@ const login = async (req, res) => {
     if (!user.isActive) {
       return res.status(401).json({
         success: false,
-        message: 'Account is deactivated. Please contact support.'
+        message: "Account is deactivated. Please contact support.",
       });
     }
 
@@ -94,7 +94,7 @@ const login = async (req, res) => {
     if (!isPasswordValid) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid email or password'
+        message: "Invalid email or password",
       });
     }
 
@@ -106,7 +106,7 @@ const login = async (req, res) => {
 
     res.json({
       success: true,
-      message: 'Login successful',
+      message: "Login successful",
       data: {
         user: {
           id: user._id,
@@ -117,16 +117,16 @@ const login = async (req, res) => {
           companyName: user.companyName,
           role: user.role,
           subscriptionTier: user.subscriptionTier,
-          lastLogin: user.lastLogin
+          lastLogin: user.lastLogin,
         },
-        ...tokens
-      }
+        ...tokens,
+      },
     });
   } catch (error) {
-    console.error('Login error:', error);
+    console.error("Login error:", error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error during login'
+      message: "Internal server error during login",
     });
   }
 };
@@ -156,15 +156,15 @@ const getProfile = async (req, res) => {
           isActive: user.isActive,
           lastLogin: user.lastLogin,
           createdAt: user.createdAt,
-          updatedAt: user.updatedAt
-        }
-      }
+          updatedAt: user.updatedAt,
+        },
+      },
     });
   } catch (error) {
-    console.error('Get profile error:', error);
+    console.error("Get profile error:", error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error while fetching profile'
+      message: "Internal server error while fetching profile",
     });
   }
 };
@@ -186,22 +186,21 @@ const updateProfile = async (req, res) => {
     if (companyName !== undefined) updateData.companyName = companyName;
 
     // Update user
-    const user = await User.findByIdAndUpdate(
-      userId,
-      updateData,
-      { new: true, runValidators: true }
-    ).select('-passwordHash');
+    const user = await User.findByIdAndUpdate(userId, updateData, {
+      new: true,
+      runValidators: true,
+    }).select("-passwordHash");
 
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: 'User not found'
+        message: "User not found",
       });
     }
 
     res.json({
       success: true,
-      message: 'Profile updated successfully',
+      message: "Profile updated successfully",
       data: {
         user: {
           id: user._id,
@@ -212,15 +211,15 @@ const updateProfile = async (req, res) => {
           companyName: user.companyName,
           role: user.role,
           subscriptionTier: user.subscriptionTier,
-          updatedAt: user.updatedAt
-        }
-      }
+          updatedAt: user.updatedAt,
+        },
+      },
     });
   } catch (error) {
-    console.error('Update profile error:', error);
+    console.error("Update profile error:", error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error while updating profile'
+      message: "Internal server error while updating profile",
     });
   }
 };
@@ -237,20 +236,20 @@ const refreshToken = async (req, res) => {
     if (!refreshToken) {
       return res.status(401).json({
         success: false,
-        message: 'Refresh token is required'
+        message: "Refresh token is required",
       });
     }
 
     // Verify refresh token
     const decoded = verifyRefreshToken(refreshToken);
-    
+
     // Get user from database
     const user = await User.findById(decoded.userId);
-    
+
     if (!user || !user.isActive) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid refresh token or user not found'
+        message: "Invalid refresh token or user not found",
       });
     }
 
@@ -259,14 +258,14 @@ const refreshToken = async (req, res) => {
 
     res.json({
       success: true,
-      message: 'Tokens refreshed successfully',
-      data: tokens
+      message: "Tokens refreshed successfully",
+      data: tokens,
     });
   } catch (error) {
-    console.error('Refresh token error:', error);
+    console.error("Refresh token error:", error);
     res.status(401).json({
       success: false,
-      message: 'Invalid or expired refresh token'
+      message: "Invalid or expired refresh token",
     });
   }
 };
@@ -280,16 +279,16 @@ const logout = async (req, res) => {
   try {
     // In a JWT implementation, logout is typically handled client-side
     // by removing the tokens from storage. Here we just send a success response.
-    
+
     res.json({
       success: true,
-      message: 'Logout successful'
+      message: "Logout successful",
     });
   } catch (error) {
-    console.error('Logout error:', error);
+    console.error("Logout error:", error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error during logout'
+      message: "Internal server error during logout",
     });
   }
 };
@@ -300,5 +299,5 @@ module.exports = {
   getProfile,
   updateProfile,
   refreshToken,
-  logout
+  logout,
 };

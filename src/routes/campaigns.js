@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require("express");
 const {
   getCampaigns,
   getCampaign,
@@ -8,14 +8,14 @@ const {
   archiveCampaign,
   getCampaignStats,
   addContentToCampaign,
-  getDashboardCampaigns
-} = require('../controllers/campaignController');
+  getDashboardCampaigns,
+} = require("../controllers/campaignController");
 const {
   validateCampaign,
   validateContent,
-  validateObjectId
-} = require('../middleware/validation');
-const { authenticateToken } = require('../middleware/auth');
+  validateObjectId,
+} = require("../middleware/validation");
+const { authenticateToken } = require("../middleware/auth");
 
 const router = express.Router();
 
@@ -27,14 +27,14 @@ router.use(authenticateToken);
  * @desc    Get campaign statistics for the user
  * @access  Private
  */
-router.get('/stats', getCampaignStats);
+router.get("/stats", getCampaignStats);
 
 /**
  * @route   GET /api/campaigns/dashboard
  * @desc    Get campaigns for dashboard view
  * @access  Private
  */
-router.get('/dashboard', getDashboardCampaigns);
+router.get("/dashboard", getDashboardCampaigns);
 
 /**
  * @route   GET /api/campaigns
@@ -48,48 +48,53 @@ router.get('/dashboard', getDashboardCampaigns);
  * @query   sortBy - Sort field (default: createdAt)
  * @query   sortOrder - Sort order (asc/desc, default: desc)
  */
-router.get('/', getCampaigns);
+router.get("/", getCampaigns);
 
 /**
  * @route   POST /api/campaigns
  * @desc    Create a new campaign
  * @access  Private
  */
-router.post('/', validateCampaign, createCampaign);
+router.post("/", validateCampaign, createCampaign);
 
 /**
  * @route   GET /api/campaigns/:id
  * @desc    Get a single campaign by ID
  * @access  Private
  */
-router.get('/:id', validateObjectId, getCampaign);
+router.get("/:id", validateObjectId, getCampaign);
 
 /**
  * @route   PUT /api/campaigns/:id
  * @desc    Update a campaign
  * @access  Private
  */
-router.put('/:id', validateObjectId, validateCampaign, updateCampaign);
+router.put("/:id", validateObjectId, validateCampaign, updateCampaign);
 
 /**
  * @route   DELETE /api/campaigns/:id
  * @desc    Delete a campaign
  * @access  Private
  */
-router.delete('/:id', validateObjectId, deleteCampaign);
+router.delete("/:id", validateObjectId, deleteCampaign);
 
 /**
  * @route   PUT /api/campaigns/:id/archive
  * @desc    Archive a campaign
  * @access  Private
  */
-router.put('/:id/archive', validateObjectId, archiveCampaign);
+router.put("/:id/archive", validateObjectId, archiveCampaign);
 
 /**
  * @route   POST /api/campaigns/:id/content
  * @desc    Add content to a campaign
  * @access  Private
  */
-router.post('/:id/content', validateObjectId, validateContent, addContentToCampaign);
+router.post(
+  "/:id/content",
+  validateObjectId,
+  validateContent,
+  addContentToCampaign
+);
 
 module.exports = router;

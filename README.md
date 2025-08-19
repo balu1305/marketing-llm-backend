@@ -5,18 +5,21 @@ A robust Node.js backend API for an AI-powered marketing campaign generator, bui
 ## 📋 Features
 
 - **User Authentication & Authorization**
+
   - JWT-based authentication with refresh tokens
   - Role-based access control
   - Password hashing with bcryptjs
   - Secure profile management
 
 - **Persona Management**
+
   - Full CRUD operations for customer personas
   - Predefined personas for quick start
   - Advanced search and filtering
   - User-specific persona isolation
 
 - **Security & Performance**
+
   - Rate limiting protection
   - CORS configuration
   - Helmet security headers
@@ -41,22 +44,26 @@ A robust Node.js backend API for an AI-powered marketing campaign generator, bui
 ## 📦 Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone <repository-url>
    cd marketing-llm-backend
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 3. **Set up environment variables**
+
    ```bash
    cp .env.example .env
    ```
-   
+
    Update `.env` with your configuration:
+
    ```env
    PORT=5000
    NODE_ENV=development
@@ -68,6 +75,7 @@ A robust Node.js backend API for an AI-powered marketing campaign generator, bui
 
 4. **Start MongoDB**
    Make sure MongoDB is running on your system:
+
    ```bash
    # Using MongoDB service (Linux/Mac)
    sudo systemctl start mongod
@@ -77,6 +85,7 @@ A robust Node.js backend API for an AI-powered marketing campaign generator, bui
    ```
 
 5. **Seed the database** (Optional)
+
    ```bash
    npm run seed
    ```
@@ -91,6 +100,7 @@ The API will be available at `http://localhost:5000`
 ## 🗄️ Database Schema
 
 ### Users Collection
+
 ```javascript
 {
   email: String (unique),
@@ -108,6 +118,7 @@ The API will be available at `http://localhost:5000`
 ```
 
 ### Personas Collection
+
 ```javascript
 {
   userId: ObjectId (ref: User),
@@ -133,6 +144,7 @@ The API will be available at `http://localhost:5000`
 ## 🔌 API Endpoints
 
 ### Authentication
+
 ```
 POST   /api/auth/register      - Register new user
 POST   /api/auth/login         - Login user
@@ -143,6 +155,7 @@ PUT    /api/auth/profile       - Update user profile
 ```
 
 ### Personas
+
 ```
 GET    /api/personas           - Get all personas (user + predefined)
 POST   /api/personas           - Create new persona
@@ -153,6 +166,7 @@ GET    /api/personas/stats     - Get persona statistics
 ```
 
 ### General
+
 ```
 GET    /api                    - API documentation
 GET    /api/health             - Health check
@@ -161,13 +175,16 @@ GET    /api/health             - Health check
 ## 🧪 Testing the API
 
 ### Using the Demo User
+
 After seeding the database, you can test with:
+
 - **Email**: `demo@marketingllm.com`
 - **Password**: `Demo123!`
 
 ### Example Requests
 
 1. **Register a new user**
+
    ```bash
    curl -X POST http://localhost:5000/api/auth/register \
      -H "Content-Type: application/json" \
@@ -181,6 +198,7 @@ After seeding the database, you can test with:
    ```
 
 2. **Login**
+
    ```bash
    curl -X POST http://localhost:5000/api/auth/login \
      -H "Content-Type: application/json" \
@@ -191,6 +209,7 @@ After seeding the database, you can test with:
    ```
 
 3. **Get personas** (requires authentication)
+
    ```bash
    curl -X GET http://localhost:5000/api/personas \
      -H "Authorization: Bearer YOUR_JWT_TOKEN"
@@ -288,11 +307,13 @@ seed-data/
 ### Common Issues
 
 1. **MongoDB Connection Error**
+
    - Ensure MongoDB is running
    - Check connection string in `.env`
    - Verify database permissions
 
 2. **JWT Token Errors**
+
    - Check JWT_SECRET in environment
    - Verify token format in Authorization header
    - Ensure token hasn't expired
@@ -303,11 +324,13 @@ seed-data/
    - Review validation rules in middleware
 
 ### Debug Mode
+
 Set `NODE_ENV=development` for detailed error messages and request logging.
 
 ## 🚀 Deployment
 
 ### Environment Variables for Production
+
 ```env
 NODE_ENV=production
 PORT=5000
@@ -318,6 +341,7 @@ CLIENT_URL=https://your-frontend-domain.com
 ```
 
 ### Production Checklist
+
 - [ ] Set strong JWT secrets
 - [ ] Configure production MongoDB URI
 - [ ] Set up proper CORS origins
