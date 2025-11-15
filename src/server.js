@@ -26,15 +26,18 @@ connectDB();
 // Initialize background services
 const initializeBackgroundServices = async () => {
   try {
-    console.log('🔧 Initializing background services...');
-    
+    console.log("🔧 Initializing background services...");
+
     // Initialize Socket.IO
     socketService.initialize(server);
-    
-    console.log('✅ Background services initialization completed');
+
+    console.log("✅ Background services initialization completed");
   } catch (error) {
-    console.error('❌ Failed to initialize background services:', error.message);
-    console.log('⚠️  Continuing without background services...');
+    console.error(
+      "❌ Failed to initialize background services:",
+      error.message
+    );
+    console.log("⚠️  Continuing without background services...");
   }
 };
 
@@ -60,7 +63,11 @@ app.use(limiter);
 // CORS configuration
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || ["http://localhost:3000", "http://localhost:8080", "https://market-campain-llm.vercel.app"],
+    origin: process.env.CLIENT_URL || [
+      "http://localhost:8080",
+      "http://localhost:3000",
+      "https://market-campain-llm.vercel.app",
+    ],
     credentials: true,
     optionsSuccessStatus: 200,
   })
@@ -107,7 +114,7 @@ const NODE_ENV = process.env.NODE_ENV || "development";
 const startServer = async () => {
   // Initialize background services first
   await initializeBackgroundServices();
-  
+
   // Start HTTP server
   server.listen(PORT, () => {
     console.log(`
@@ -140,19 +147,19 @@ startServer();
 
 // Graceful shutdown
 const gracefulShutdown = async () => {
-  console.log('🛑 Shutting down gracefully...');
-  
+  console.log("🛑 Shutting down gracefully...");
+
   try {
     // Close Socket.IO connections
     socketService.close();
-    
+
     // Close HTTP server
     server.close(() => {
-      console.log('✅ Process terminated');
+      console.log("✅ Process terminated");
       process.exit(0);
     });
   } catch (error) {
-    console.error('❌ Error during shutdown:', error.message);
+    console.error("❌ Error during shutdown:", error.message);
     process.exit(1);
   }
 };
